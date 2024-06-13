@@ -162,15 +162,6 @@ services:
     working_dir: /app/data
     command: [ "python", "parquet.py" ]
 
-  # spark-notebook:
-  #   image: jupyter/pyspark-notebook:python-3.7
-  #   container_name: spark-notebook
-  #   volumes:
-  #     - ./data:/home/jovyan/data
-  #     - ./notebooks:/home/jovyan/notebooks
-  #   ports:
-  #     - "8888:8888"
-
   postgres:
     image: postgres:13
     environment:
