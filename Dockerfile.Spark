@@ -1,10 +1,57 @@
 FROM bde2020/spark-master:3.3.0-hadoop3.3
 
-# Install Python, pip, and necessary dependencies
-RUN apk add --no-cache python3 py3-pip build-base python3-dev
+# Install necessary build tools and libraries
+RUN apk update && apk add --no-cache \
+    wget \
+    build-base \
+    libffi-dev \
+    openssl-dev \
+    bzip2-dev \
+    zlib-dev \
+    xz-dev \
+    readline-dev \
+    sqlite-dev \
+    lapack-dev \
+    gfortran \
+    linux-headers \
+    cmake \
+    ninja \
+    meson \
+    libgfortran
+
+# Download and build Python 3.10
+RUN wget https://www.python.org/ftp/python/3.10.4/Python-3.10.4.tgz && \
+    tar xzf Python-3.10.4.tgz && \
+    cd Python-3.10.4 && \
+    ./configure --enable-optimizations && \
+    make altinstall && \
+    ln -sf /usr/local/bin/python3.10 /usr/bin/python3 && \
+    cd .. && rm -rf Python-3.10.4 Python-3.10.4.tgz
+
+# Install pip for Python 3.10
+RUN wget https://bootstrap.pypa.io/get-pip.py && \
+    python3.10 get-pip.py && \
+    ln -sf /usr/local/bin/pip3.10 /usr/bin/pip3 && \
+    rm get-pip.py
 
 # Upgrade pip
 RUN pip3 install --upgrade pip
 
-# Install numpy
-RUN pip3 install numpy
+# Install necessary Python packages
+RUN pip3 install numpy==1.22.4 --default-timeout=100
+RUN pip3 install scipy==1.8.0 --default-timeout=100
+RUN pip3 install cython==0.29.24 --default-timeout=100
+RUN pip3 install meson==1.4.1 --default-timeout=100
+RUN pip3 install ninja==1.10.2 --default-timeout=100
+
+# Install scikit-learn
+RUN pip3 install scikit-learn==1.2.2 --default-timeout=100
+
+# Install xgboost
+RUN pip3 install xgboost==1.6.2 --default-timeout=100
+
+# Install pandas
+RUN pip3 install pandas==1.4.3 --default-timeout=100
+
+# Install matplotlib
+RUN pip3 install matplotlib==3.5.1 --default-timeout=100
